@@ -117,6 +117,7 @@ class SiswaController extends Controller
             'phone_number' => ['required', 'string', 'max:15'],
         ]);
 
+
         $data = User::where([
             ['id', $id],
             ['role', 'siswa']
@@ -149,6 +150,32 @@ class SiswaController extends Controller
         $data->delete();
 
         return redirect()->back()->with('message', 'Siswa berhasil dihapus!!');
+    }
+
+    public function updatePassword(Request $request, $id)
+    {
+        abort_if(auth()->user()->role != 'admin', 403);
+
+        $validated = $request->validate([
+            'password' => ['required', 'string', 'confirmed', Password::min(8)
+                ->mixedCase()
+                ->letters()
+                ->numbers()
+                ->symbols()
+                ->uncompromised(),
+            ],
+        ]);
+
+        $data = User::where([
+            ['id', $id],
+            ['role', 'siswa']
+        ])->firstOrFail();
+
+        $data->update([
+            'password' => Hash::make($request->password),
+        ]);
+
+        return redirect(route('siswa.edit', $id))->with('message', 'Password siswa berhasil diupdate!!');
     }
 
     public function nilai($id)

@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\HasilSeleksi;
 use App\Models\Jurusan;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
+
 
 class CetakHasilController extends Controller
 {
@@ -27,5 +29,31 @@ class CetakHasilController extends Controller
         ])->get();
 
         return view('cetak-hasil.index', compact('hasil', 'jurusan', 'nilai_akhir'));
+    }
+
+    public function cetakHasilPdf()
+    {
+        $hasil = HasilSeleksi::where('user_id', auth()->user()->id)->first();
+
+        if(empty($hasil->nilai_akhir))
+        {
+            $nilai_akhir = 0;
+        }else{
+            $nilai_akhir = $hasil->nilai_akhir;
+        }
+
+        $jurusan = Jurusan::where([
+            ['range_1', '<=', $nilai_akhir],
+            ['range_2', '>=', $nilai_akhir],
+        ])->get();
+
+        $data = [
+            'hasil' => $hasil,
+            'nilai_akhir' => $nilai_akhir,
+            'jurusan' => $jurusan
+        ];
+
+        $pdf = Pdf::loadView('pdf.hasil', $data);
+        return $pdf->download('hasil-akhir.pdf');
     }
 }

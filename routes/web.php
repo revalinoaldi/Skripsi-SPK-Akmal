@@ -31,13 +31,6 @@ Route::get(
     ]
 )->name('siswa.nilai');
 
-Route::get(
-    'cetak-hasil',
-    [
-        App\Http\Controllers\CetakHasilController::class,
-        'index'
-    ]
-)->name('cetak-hasil.index');
 
 Route::put(
     'siswa/{id}/nilai',
@@ -46,5 +39,30 @@ Route::put(
         'updateNilai'
     ]
 )->name('siswa.updateNilai');
+
+Route::put(
+    'siswa/{id}/updatePassword',
+    [
+        App\Http\Controllers\SiswaController::class,
+        'updatePassword'
+    ]
+)->name('siswa.updatePassword');
+
+Route::get(
+    'cetak-hasil',
+    [
+        App\Http\Controllers\CetakHasilController::class,
+        'index'
+    ]
+)->name('cetak-hasil.index');
+
+Route::get(
+    'cetak-hasil-pdf',
+    [
+        App\Http\Controllers\CetakHasilController::class,
+        'cetakHasilPdf'
+    ]
+)->name('cetak-hasil.cetakHasilPdf');
+
 
 require __DIR__.'/auth.php';
